@@ -1,0 +1,110 @@
+﻿@using OnlineChat.Models.Messages;
+@using OnlineChat.Models.Documents;
+@model OnlineChat.ViewModels.CreateModel;
+@{ }
+<h2>@ViewBag.ChatName</h2>
+@if (ViewBag.Join)
+{
+<div id="joinModal" class="join_modal notdisp">
+    <label class="ots">Вы хотите присоединиться?</label>
+    <form asp-controller="Chat" asp-action="JoinChat">
+        <div class="form-group notdisp">
+            <label asp-for="Email" class="control-label">Название</label>
+            <input asp-for="Email" class="form-control" value=@ViewBag.Userid />
+            <span asp-validation-for="Email" class="text-danger"></span>
+        </div>
+        <div class="form-group notdisp">
+            <label asp-for="Name" class="control-label">Название</label>
+            <input asp-for="Name" class="form-control" value=@ViewBag.GUID />
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <input type="submit" value="Да" class="btn btn-primary ots posx" />
+        </div>
+    </form>
+    <button class="btn btn-primary ots pos" id="noButton">Нет</button>
+</div>
+   <button id ="joinChat" class="btn btn-primary pink">Присоединиться</button>     
+        }
+@if (ViewBag.Load)
+{
+<form asp-controller="Chat" asp-action="Loadmore">
+    <div class="form-group notdisp">
+        <label asp-for="Name" class="control-label">Название</label>
+        <input asp-for="Name" class="form-control" value=@ViewBag.GUID />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <input type="submit" value="Загрузить ещё" class="btn btn-primary pink" />
+    </div>
+</form>}
+<ul class="chat" id="chat">
+    @for (int i = 0; i < ViewBag.Texts.Count; i++)
+    {
+@if (ViewBag.Texts[i].Color == 0)
+{
+<li id="message">
+    @ViewBag.Names[i]: @ViewBag.Texts[i].Text
+    @if (ViewBag.Texts[i].DocId != 0)
+    {
+<br>
+                        <a href="/Chat/GetBytes?GUID=@ViewBag.Texts[i].Doc.GUID">@ViewBag.Texts[i].Doc.Name</a>}
+</li>}
+                @if (ViewBag.Texts[i].Color != 0)
+                {
+<li class="admin_mes"  id="message">
+    @ViewBag.Names[i]: @ViewBag.Texts[i].Text
+    @if (ViewBag.Texts[i].DocId != 0)
+    {
+<br>
+                        <a href="/Chat/GetBytes?GUID=@ViewBag.Texts[i].Doc.GUID">@ViewBag.Texts[i].Doc.Name</a>}
+</li>}}
+</ul>
+@if (ViewBag.Auth && !ViewBag.Join)
+{
+<form asp-controller="Chat" asp-action="Create" method="post" enctype="multipart/form-data">
+    <div class="form-group notdisp">
+        <label asp-for="Email" class="control-label">Название</label>
+        <input asp-for="Email" class="form-control" value=@ViewBag.UserId />
+        <span asp-validation-for="Email" class="text-danger"></span>
+    </div>
+    <div class="form-group notdisp">
+        <label asp-for="Name" class="control-label">Название</label>
+        <input asp-for="Name" class="form-control" value=@ViewBag.GUID />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Text" class="control-label">Текст</label>
+        <input asp-for="Text" class="form-control" />
+        <span asp-validation-for="Text" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="File" class="control-label">Файл</label>
+        <input asp-for="File" class="form-control" type="file"/>
+        <span asp-validation-for="File" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <input type="submit" value="Отправить" class="btn btn-primary pink" />
+    </div>
+</form>
+}
+@if (ViewBag.Join)
+{
+<script type="text/javascript">
+    let j = false;
+    document.getElementById('joinChat').addEventListener('click', () => {
+        j = !j;
+        if (j) {
+            document.getElementById('joinModal').classList.remove('notdisp');
+        }
+        else {
+            document.getElementById('joinModal').classList.add('notdisp');
+        }
+    });
+    document.getElementById('noButton').addEventListener('click', () => { document.getElementById('joinModal').classList.add('notdisp'); j = !j;  })
+ 
+    </script>
+}
+<input class="notdisp" id="chatName1" value=@ViewBag.GUID>
+<script src="~/js/microsoft/signalr/dist/browser/signalr.js"></script>
+<script src="~/js/chat.js"></script>
